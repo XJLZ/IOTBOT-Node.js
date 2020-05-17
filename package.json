@@ -1,0 +1,21 @@
+{
+  "name": "IOTBOT-Node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "iotbot.js",
+  "private": true,
+  "scripts": {
+    "start": "node ./iotbot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.4.6",
+    "request": "^2.88.2",
+    "socket.io-client": "^2.3.0"
+  }
+}

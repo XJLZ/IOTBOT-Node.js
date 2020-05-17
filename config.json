@@ -1,0 +1,8 @@
+{
+	"QQ": 你的机器人QQ,
+	"HOST": 你的服务器地址，例如"127.0.0.1",
+	"PORT": 端口，例如80,
+	"URI": "/v1/LuaApiCaller?",
+	"USER": 用户，例如"root",
+	"PASS": 密码，例如"root"
+}
