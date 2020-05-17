@@ -108,7 +108,7 @@ let Plugins = {
 				  "atUser": 0
 			}
 			Api.SendMsg(params, GroupId)
-		}else if(date.getHours() < 22){
+		}else if(date.getHours() < 24){
 			let params = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
