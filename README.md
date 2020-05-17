@@ -47,6 +47,7 @@ PS:令牌生成:
 ```
 let Authorization = 'Basic ' + Buffer.from('root':'root').toString('base64')
 ```
+俩root可随意
 
 5.然后在IOTBOT的CoreConf.conf文件下进行如下配置
 
