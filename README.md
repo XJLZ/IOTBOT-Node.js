@@ -6,8 +6,7 @@
 3.由于我使用了Nginx方向代理，所以又得安装Nginx,emmm....这是出于安全性所以才弄的。
 4.在nginx的配置文件下的这几个地方添加：
 
-![1589710180346](C:\Users\Admin\AppData\Roaming\Typora\typora-user-images\1589710180346.png)
-
+![YRC9Ff.png](https://s1.ax1x.com/2020/05/17/YRC9Ff.png)
 ```
 map $http_upgrade $connection_upgrade {
     default upgrade;
@@ -15,8 +14,7 @@ map $http_upgrade $connection_upgrade {
 }
 ```
 
-![1589710223166](C:\Users\Admin\AppData\Roaming\Typora\typora-user-images\1589710223166.png)
-
+![YRCklQ.png](https://s1.ax1x.com/2020/05/17/YRCklQ.png)
 
 
     location /socket.io/ {
