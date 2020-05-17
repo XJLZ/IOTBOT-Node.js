@@ -98,12 +98,22 @@ let Plugins = {
 				  "atUser": 0
 			}
 			Api.SendMsg(params, GroupId)
-		}else if(date.getHours() < 22){
+		}else if(date.getHours() < 20){
 			let params = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
 				  "sendMsgType": "TextMsg",
 				  "content": "晚上好！一天的工作终于结束了！不打算吃顿好的犒劳一下自己？[表情178]" ,
+				  "groupid": 0,
+				  "atUser": 0
+			}
+			Api.SendMsg(params, GroupId)
+		}else if(date.getHours() < 22){
+			let params = {
+				  "toUser":GroupId,
+				  "sendToType": 2,
+				  "sendMsgType": "TextMsg",
+				  "content": "已经很晚了，早点休息吧，还是说你的夜生活才刚刚开始？？[表情178]" ,
 				  "groupid": 0,
 				  "atUser": 0
 			}
