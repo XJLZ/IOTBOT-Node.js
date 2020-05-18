@@ -25,7 +25,6 @@ let Api = {
 			res.on('data', (chunk)=>{
 				rawData += chunk.toString('utf-8')
 			})
-			console.log('rawData--->',rawData )
 			res.on('end', () => {
 				console.log('响应中已无数据')
 			})
