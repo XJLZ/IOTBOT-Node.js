@@ -3,7 +3,6 @@ const Api = require('./SendMsg')
 const fs = require('fs')
 const cheerio = require('cheerio')
 const translate = require('google-translate-api')
-let count = 0
 let Plugins = {
 	Aword(GroupId){
 		http.get('https://v1.hitokoto.cn/', (res) => {
@@ -136,13 +135,21 @@ let Plugins = {
 	},
 	Baike(GroupId, Content){
 		let keyWord = Content.substring(2)
-		console.log(key)
 		http.get('https://baike.baidu.com/item/' + keyWord, (res) => {
 			const { statusCode } = res
 			const contentType = res.headers['content-type']
 			let error;
 			if (statusCode !== 200) {
 				error = new Error('请求失败\n' + `状态码: ${statusCode}`)
+				let params = {
+					  "toUser":GroupId,
+					  "sendToType": 2,
+					  "sendMsgType": "TextMsg",
+					  "content": error.message,
+					  "groupid": 0,
+					  "atUser": 0
+				}
+				Api.SendMsg(params, GroupId)
 			} 
 			if (error) {
 				console.error(error.message)
@@ -183,23 +190,22 @@ let Plugins = {
 			console.error(`出现错误: ${e.message}`);
 		})
 	},
-	async Translate(GroupId, Content){
+	Translate(GroupId, Content){
 		let keyWord = Content.substring(2)
-		let result = await translate(keyWord, {
-		  tld: "cn",
-		  to: "zh-CN",
+		translate(keyWord, {to: 'zh-cn'}).then(res => {
+		    console.log(res.text)
+				let params = {
+					  "toUser":GroupId,
+					  "sendToType": 2,
+					  "sendMsgType": "TextMsg",
+					  "content": res.text,
+					  "groupid": 0,
+					  "atUser": 0
+				}
+				Api.SendMsg(params, GroupId)
+		}).catch(err => {
+		    console.error(err);
 		});
-		let {data} = result
-		console.log(data[0])
-		let params = {
-			  "toUser":GroupId,
-			  "sendToType": 2,
-			  "sendMsgType": "TextMsg",
-			  "content": data[0],
-			  "groupid": 0,
-			  "atUser": 0
-		}
-		Api.SendMsg(params, GroupId)
 	}
 }
 
