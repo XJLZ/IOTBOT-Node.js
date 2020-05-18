@@ -183,22 +183,23 @@ let Plugins = {
 			console.error(`出现错误: ${e.message}`);
 		})
 	},
-	Translate(GroupId, Content){
+	async Translate(GroupId, Content){
 		let keyWord = Content.substring(2)
-		translate(keyWord, {to: 'zh-cn'}).then(res => {
-		    console.log(res.text)
-				let params = {
-					  "toUser":GroupId,
-					  "sendToType": 2,
-					  "sendMsgType": "TextMsg",
-					  "content": res.text,
-					  "groupid": 0,
-					  "atUser": 0
-				}
-				Api.SendMsg(params, GroupId)
-		}).catch(err => {
-		    console.error(err);
+		let result = await translate(keyWord, {
+		  tld: "cn",
+		  to: "zh-CN",
 		});
+		let {data} = result
+		console.log(data[0])
+		let params = {
+			  "toUser":GroupId,
+			  "sendToType": 2,
+			  "sendMsgType": "TextMsg",
+			  "content": data[0],
+			  "groupid": 0,
+			  "atUser": 0
+		}
+		Api.SendMsg(params, GroupId)
 	}
 }
 
