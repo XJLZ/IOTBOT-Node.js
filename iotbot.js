@@ -8,6 +8,7 @@ const QQ = config.QQ
 const user = config.USER
 const pass = config.PASS
 const Authorization = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
+const url = '/v1/RefreshKeys?qq='+ QQ
 const socket = io(WS_API, {
 	transports: ['websocket'],
 	extraHeaders: {
@@ -48,3 +49,38 @@ socket.on('OnFriendMsgs', async data => {
 socket.on('OnEvents', async data => {
 	console.log('>>OnEvents', JSON.stringify(data, null, 2))
 })
+function RefreshKeys(){
+	// 构建请求体
+	let options = {
+		hostname: config.HOST,
+		port: config.PORT,
+		path: url,
+		method: 'GET',
+		headers: {
+			'Authorization': Authorization
+		}
+	}
+	// 发送请求
+	let req = http.request(options, (res)=>{
+		res.setEncoding('utf8')
+		let rawData = ''
+		res.on('data', (chunk)=>{
+			rawData += chunk.toString('utf-8')
+		})
+		res.on('end', () => {
+			let {Ret} = JSON.parse(rawData)
+			if(Ret == 'ok'){
+				console.log('刷新成功!')
+			}
+		})
+	})
+	
+	req.on('error', (e) => {
+		console.error(`请求遇到问题: ${e.message}`)
+	})
+	req.end()
+}
+// 刷新Key 每隔30s
+setInterval(()=>{
+	RefreshKeys()
+},30000)
