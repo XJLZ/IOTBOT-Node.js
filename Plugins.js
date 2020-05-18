@@ -2,7 +2,9 @@ const http = require('https')
 const Api = require('./SendMsg')
 const fs = require('fs')
 const cheerio = require('cheerio')
-const translate = require('google-translate-api')
+// const translate = require('google-translate-api')
+const translate_open = require('google-translate-open-api').default
+const qs = require('querystring')
 let Plugins = {
 	Aword(GroupId){
 		http.get('https://v1.hitokoto.cn/', (res) => {
@@ -135,6 +137,7 @@ let Plugins = {
 	},
 	Baike(GroupId, Content){
 		let keyWord = Content.substring(2)
+		keyWord = qs.escape(keyWord)
 		http.get('https://baike.baidu.com/item/' + keyWord, (res) => {
 			const { statusCode } = res
 			const contentType = res.headers['content-type']
@@ -190,22 +193,37 @@ let Plugins = {
 			console.error(`出现错误: ${e.message}`);
 		})
 	},
-	Translate(GroupId, Content){
+	async Translate(GroupId, Content){
 		let keyWord = Content.substring(2)
-		translate(keyWord, {to: 'zh-cn'}).then(res => {
-		    console.log(res.text)
-				let params = {
-					  "toUser":GroupId,
-					  "sendToType": 2,
-					  "sendMsgType": "TextMsg",
-					  "content": res.text,
-					  "groupid": 0,
-					  "atUser": 0
-				}
-				Api.SendMsg(params, GroupId)
-		}).catch(err => {
-		    console.error(err);
-		});
+		// translate(keyWord, {to: 'zh-cn'}).then(res => {
+		//     console.log(res.text)
+		// 		let params = {
+		// 			  "toUser":GroupId,
+		// 			  "sendToType": 2,
+		// 			  "sendMsgType": "TextMsg",
+		// 			  "content": res.text,
+		// 			  "groupid": 0,
+		// 			  "atUser": 0
+		// 		}
+		// 		Api.SendMsg(params, GroupId)
+		// }).catch(err => {
+		//     console.error(err);
+		// });
+			let result = await translate_open(keyWord, {
+			  tld: "cn",
+			  to: "zh-CN"
+			})
+			let {data} = result
+			console.log(data[0])
+			let params = {
+					"toUser":GroupId,
+					"sendToType": 2,
+					"sendMsgType": "TextMsg",
+					"content": data[0],
+					"groupid": 0,
+					"atUser": 0
+			}
+			Api.SendMsg(params, GroupId)
 	}
 }
 
