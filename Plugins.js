@@ -2,6 +2,7 @@ const http = require('https')
 const Api = require('./SendMsg')
 const fs = require('fs')
 const cheerio = require('cheerio')
+const translate = require('google-translate-api')
 let count = 0
 let Plugins = {
 	Aword(GroupId){
@@ -134,9 +135,9 @@ let Plugins = {
 		}
 	},
 	Baike(GroupId, Content){
-		let key = Content.substring(2)
+		let keyWord = Content.substring(2)
 		console.log(key)
-		http.get('https://baike.baidu.com/item/' + key, (res) => {
+		http.get('https://baike.baidu.com/item/' + keyWord, (res) => {
 			const { statusCode } = res
 			const contentType = res.headers['content-type']
 			let error;
@@ -181,6 +182,23 @@ let Plugins = {
 		}).on('error', (e)=>{
 			console.error(`出现错误: ${e.message}`);
 		})
+	},
+	Translate(GroupId, Content){
+		let keyWord = Content.substring(2)
+		translate(keyWord, {to: 'zh-cn'}).then(res => {
+		    console.log(res.text)
+				let params = {
+					  "toUser":GroupId,
+					  "sendToType": 2,
+					  "sendMsgType": "TextMsg",
+					  "content": res.text,
+					  "groupid": 0,
+					  "atUser": 0
+				}
+				Api.SendMsg(params, GroupId)
+		}).catch(err => {
+		    console.error(err);
+		});
 	}
 }
 

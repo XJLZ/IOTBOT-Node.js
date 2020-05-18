@@ -42,6 +42,9 @@ socket.on('OnGroupMsgs', async data => {
 		if(Content.indexOf("百科") == 0){
 			await Plugin.Baike(FromGroupId,Content)
 		}
+		if(Content.indexOf("翻译") == 0){
+			await Plugin.Translate(FromGroupId,Content)
+		}
 	}
 })
 

@@ -57,7 +57,9 @@ Port = "127.0.0.1:8888"
 
 PS：如果是阿里云或者其他云服务器，记得在安全组中添加端口，防火墙也要把端口打开
 
-6.最后记得在config.json文件中填写配置
+6.安装好包，然后在node_modules目录下找到google-translate-api和google-translate-token这两个文件夹，将里面index.js里的几个https://translate.google.com全部替换为 https://translate.google.cn，就能不翻墙使用这个谷歌翻译api了，跟cn网站那个是同一个服务器。需要替换域名的两个文件路径为：node_modules/google-translate-api/index.js 和 node_modules/google-translate-token/index.js  
+
+7.最后记得在config.json文件中填写配置
 
 ## 启动
 
