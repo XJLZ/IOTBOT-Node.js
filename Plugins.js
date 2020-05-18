@@ -1,20 +1,18 @@
 const http = require('https')
 const Api = require('./SendMsg')
 const fs = require('fs')
-const url = 'https://v1.hitokoto.cn/'
+const cheerio = require('cheerio')
 let count = 0
 let Plugins = {
 	Aword(GroupId){
-		http.get(url, (res) => {
+		http.get('https://v1.hitokoto.cn/', (res) => {
 			const { statusCode } = res
 			const contentType = res.headers['content-type']
 			let error;
 			if (statusCode !== 200) {
-				error = new Error('请求失败\n' +
-													`状态码: ${statusCode}`)
+				error = new Error('请求失败\n' + `状态码: ${statusCode}`)
 			} else if (!/^application\/json/.test(contentType)) {
-				error = new Error('无效的 content-type.\n' +
-													`期望的是 application/json 但接收到的是 ${contentType}`)
+				error = new Error('无效的 content-type.\n' + 	`期望的是 application/json 但接收到的是 ${contentType}`)
 			}
 			if (error) {
 				console.error(error.message)
@@ -68,7 +66,7 @@ let Plugins = {
 		        '周末要不要去看电影？'
 		      ]
 		let index = Math.floor((Math.random() * welcomeArr.length))
-		if(date.getHours() < 8){
+		if(date.getHours() < 9){
 			let params = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
@@ -98,7 +96,7 @@ let Plugins = {
 				  "atUser": 0
 			}
 			Api.SendMsg(params, GroupId)
-		}else if(date.getHours() < 20){
+		}else if(date.getHours() < 22){
 			let params = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
@@ -134,6 +132,55 @@ let Plugins = {
 				Api.SendMsg(params, GroupId)
 			},2000)
 		}
+	},
+	Baike(GroupId, Content){
+		let key = Content.substring(2)
+		console.log(key)
+		http.get('https://baike.baidu.com/item/' + key, (res) => {
+			const { statusCode } = res
+			const contentType = res.headers['content-type']
+			let error;
+			if (statusCode !== 200) {
+				error = new Error('请求失败\n' + `状态码: ${statusCode}`)
+			} 
+			if (error) {
+				console.error(error.message)
+				// 消费响应数据来释放内存。
+				res.resume()
+				return
+			}
+			let html = ''
+			// 数据分段 只要接收数据就会触发data事件  chunk：每次接收的数据片段
+			res.on('data', (chunk)=>{
+				html += chunk.toString('utf-8')
+			})
+			// 数据流传输完毕
+			res.on('end', ()=>{
+				console.log('数据传输完毕！')
+				try {
+					let $ =  cheerio.load(html)
+					let content = ''
+					$('div.lemma-summary > div.para').each((index, el)=>{
+						content += $(el).text()
+					})
+					console.log(content)
+					content = content.replace(/\[.*\]/g,'').replace(/[\r\n]/g,'')
+					let params = {
+						  "toUser":GroupId,
+						  "sendToType": 2,
+						  "sendMsgType": "TextMsg",
+						  "content": content,
+						  "groupid": 0,
+						  "atUser": 0
+					}
+					Api.SendMsg(params, GroupId)
+				} catch (e) {
+					console.error(e.message);
+				}
+			})
+		}).on('error', (e)=>{
+			console.error(`出现错误: ${e.message}`);
+		})
 	}
 }
 
