@@ -1,4 +1,5 @@
 const io = require('socket.io-client')
+const http = require('http')
 const Plugin = require('./Plugins')
 const fs = require('fs')
 // 读取配置文件
@@ -26,7 +27,6 @@ socket.on('disconnect', e => console.log('WS已断开', e))
 socket.on('OnGroupMsgs', async data => {
 	console.log('>>OnGroupMsgs', JSON.stringify(data, null, 2))
 	let { FromGroupId, Content, MsgType } = data.CurrentPacket.Data
-	// 处理图片信息
 	if (MsgType == 'PicMsg') {
 		let MsgDate = JSON.parse(Content)
 		// console.log(MsgDate.GroupPic[0].Url)
@@ -39,16 +39,21 @@ socket.on('OnGroupMsgs', async data => {
 				await Plugin.Morning(FromGroupId)
 				break
 		}
+		if(Content.indexOf("百科") == 0){
+			await Plugin.Baike(FromGroupId,Content)
+		}
 	}
 })
 
 socket.on('OnFriendMsgs', async data => {
-
+	console.log('>>OnFriendMsgs', JSON.stringify(data, null, 2))
 })
 
 socket.on('OnEvents', async data => {
 	console.log('>>OnEvents', JSON.stringify(data, null, 2))
 })
+
+// 刷新Key
 function RefreshKeys(){
 	// 构建请求体
 	let options = {
@@ -62,6 +67,7 @@ function RefreshKeys(){
 	}
 	// 发送请求
 	let req = http.request(options, (res)=>{
+		
 		res.setEncoding('utf8')
 		let rawData = ''
 		res.on('data', (chunk)=>{
