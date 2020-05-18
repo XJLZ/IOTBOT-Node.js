@@ -2,8 +2,8 @@
 ## 开始
 
 1.首先的有node环境，没有的自行百度安装。  
-2.有环境了，先 npm install 把依赖下载下来。 
-3.由于我使用了Nginx方向代理，所以又得安装Nginx,emmm....这是出于安全性所以才弄的。  
+2.有环境了，先 npm install 把依赖下载下来。  
+3.由于我使用了Nginx方向代理，所以又得安装Nginx,emmm....这是出于安全性所以才弄的。   
 4.在nginx的配置文件下的这几个地方添加：  
 
 ![YRC9Ff.png](https://s1.ax1x.com/2020/05/17/YRC9Ff.png)
@@ -47,6 +47,7 @@ PS:令牌生成:
 ```
 let Authorization = 'Basic ' + Buffer.from('root':'root').toString('base64')
 ```
+俩root可随意
 
 5.然后在IOTBOT的CoreConf.conf文件下进行如下配置
 
