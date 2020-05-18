@@ -70,7 +70,7 @@ function RefreshKeys(){
 		res.on('end', () => {
 			let {Ret} = JSON.parse(rawData)
 			if(Ret == 'ok'){
-				console.log('刷新成功!')
+				console.log('心跳成功!')
 			}
 		})
 	})
