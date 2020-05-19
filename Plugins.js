@@ -5,6 +5,7 @@ const cheerio = require('cheerio')
 // const translate = require('google-translate-api')
 const translate_open = require('google-translate-open-api').default
 const qs = require('querystring')
+let count = 0
 let Plugins = {
 	Aword(GroupId){
 		http.get('https://v1.hitokoto.cn/', (res) => {
