@@ -56,11 +56,8 @@ let Plugins = {
 	Morning(GroupId,UserId){
 		let flag = false
 		if(users.length != 0){
-			console.log('if' + users)
 			for (let index in users) {
-				console.log('for' + index)
 				if(users[index] == UserId){
-					console.log('if' + users[index])
 					let params = {
 						  "toUser":GroupId,
 						  "sendToType": 2,
