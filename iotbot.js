@@ -26,7 +26,7 @@ socket.on('disconnect', e => console.log('WS已断开', e))
 
 socket.on('OnGroupMsgs', async data => {
 	console.log('>>OnGroupMsgs', JSON.stringify(data, null, 2))
-	let { FromGroupId, Content, MsgType } = data.CurrentPacket.Data
+	let { FromGroupId, FromUserId, Content, MsgType } = data.CurrentPacket.Data
 	if (MsgType == 'PicMsg') {
 		let MsgDate = JSON.parse(Content)
 		// console.log(MsgDate.GroupPic[0].Url)
@@ -36,14 +36,14 @@ socket.on('OnGroupMsgs', async data => {
 				await Plugin.Aword(FromGroupId)
 				break
 			case '早':
-				await Plugin.Morning(FromGroupId)
+				await Plugin.Morning(FromGroupId,FromUserId)
 				break
 		}
 		if(Content.indexOf("百科") == 0){
-			await Plugin.Baike(FromGroupId,Content)
+			Plugin.Baike(FromGroupId,Content)
 		}
 		if(Content.indexOf("翻译") == 0){
-			await Plugin.Translate(FromGroupId,Content)
+			Plugin.Translate(FromGroupId,Content)
 		}
 	}
 })

@@ -6,6 +6,7 @@ const cheerio = require('cheerio')
 const translate_open = require('google-translate-open-api').default
 const qs = require('querystring')
 let count = 0
+let users = []
 let Plugins = {
 	Aword(GroupId){
 		http.get('https://v1.hitokoto.cn/', (res) => {
@@ -52,7 +53,31 @@ let Plugins = {
 				console.error(`出现错误: ${e.message}`);
 		})
 	},
-	Morning(GroupId){
+	Morning(GroupId,UserId){
+		let flag = false
+		if(users.length != 0){
+			console.log('if' + users)
+			for (let index in users) {
+				console.log('for' + index)
+				if(users[index] == UserId){
+					console.log('if' + users[index])
+					let params = {
+						  "toUser":GroupId,
+						  "sendToType": 2,
+						  "sendMsgType": "TextMsg",
+						  "content": "你已经问候过了，请不要重复问候哦！",
+						  "groupid": 0,
+						  "atUser": UserId
+					}
+					Api.SendMsg(params, GroupId)
+					flag = true
+					break
+				}
+			}
+		}
+		if(flag) return
+		users.push(UserId)
+		console.log(users)
 		let date = new Date()
 		let time = date.getHours() + ":" + date.getMinutes()
 		if(date.getHours() == 0) count = 0
@@ -61,15 +86,30 @@ let Plugins = {
 		        '要不要和朋友打局LOL',
 		        '要不要和朋友打局王者荣耀',
 		        '几天没见又更好看了呢😍',
-		        '今天在群里吹水了吗',
+		        '今天在群里吹水了吗？要来3张色图么？',
 		        '今天吃了什么好吃的呢',
 		        '今天您微笑了吗😊',
 		        '今天帮助别人解决问题了吗',
-		        '准备吃些什么呢',
+		        '准备吃些什么呢？来3张色图开开胃?',
 		        '周末要不要去看电影？'
 		      ]
 		let index = Math.floor((Math.random() * welcomeArr.length))
 		if(date.getHours() < 9){
+			if(count == 1){
+				setTimeout(function(){
+					let params = {
+						  "toUser":GroupId,
+						  "sendToType": 2,
+						  "sendMsgType": "VoiceMsg",
+						  "content": "",
+						  "groupid": 0,
+						  "atUser": 0,
+							"voiceUrl": "https://sound-ks1.cdn.missevan.com/aod/202005/15/1f2c3edc2557cf0161fd20dcfebbf0e5130012-128k.m4a",
+							"voiceBase64Buf": ""
+					}
+					Api.SendMsg(params, GroupId)
+				},3000)
+			}
 			let params = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
@@ -84,7 +124,7 @@ let Plugins = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
 				  "sendMsgType": "TextMsg",
-				  "content": "上午好！今天又写了几个Bug🐞呢？中午准备吃些什么呢？" ,
+				  "content": "上午好！今天又写了几个Bug🐞呢？中午准备吃些什么呢？来3张色图开开胃?" ,
 				  "groupid": 0,
 				  "atUser": 0
 			}
@@ -114,26 +154,11 @@ let Plugins = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
 				  "sendMsgType": "TextMsg",
-				  "content": "已经很晚了，早点休息吧，还是说你的夜生活才刚刚开始？？[表情178]" ,
+				  "content": "已经很晚了，早点休息吧，还是说你的夜生活才刚刚开始？？[表情178]来3张色图先！！" ,
 				  "groupid": 0,
 				  "atUser": 0
 			}
 			Api.SendMsg(params, GroupId)
-		}
-		if(count == 1){
-			setTimeout(function(){
-				let params = {
-					  "toUser":GroupId,
-					  "sendToType": 2,
-					  "sendMsgType": "VoiceMsg",
-					  "content": "",
-					  "groupid": 0,
-					  "atUser": 0,
-						"voiceUrl": "https://sound-ks1.cdn.missevan.com/aod/202005/15/1f2c3edc2557cf0161fd20dcfebbf0e5130012-128k.m4a",
-						"voiceBase64Buf": ""
-				}
-				Api.SendMsg(params, GroupId)
-			},2000)
 		}
 	},
 	Baike(GroupId, Content){
