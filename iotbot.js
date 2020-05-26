@@ -45,6 +45,9 @@ socket.on('OnGroupMsgs', async data => {
 		if(Content.indexOf("翻译") == 0){
 			Plugin.Translate(FromGroupId,Content)
 		}
+		if(Content.indexOf("翻英") == 0){
+			Plugin.Translate2En(FromGroupId,Content)
+		}
 	}
 })
 

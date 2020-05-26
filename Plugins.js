@@ -2,6 +2,7 @@ const http = require('https')
 const Api = require('./SendMsg')
 const fs = require('fs')
 const cheerio = require('cheerio')
+const request = require('request')
 // const translate = require('google-translate-api')
 const translate_open = require('google-translate-open-api').default
 const qs = require('querystring')
@@ -55,6 +56,7 @@ let Plugins = {
 	},
 	Morning(GroupId,UserId){
 		let flag = false
+		// 防止重复问候
 		if(users.length != 0){
 			for (let index in users) {
 				if(users[index] == UserId){
@@ -161,59 +163,84 @@ let Plugins = {
 	Baike(GroupId, Content){
 		let keyWord = Content.substring(2)
 		keyWord = qs.escape(keyWord)
-		http.get('https://baike.baidu.com/item/' + keyWord, (res) => {
-			const { statusCode } = res
-			const contentType = res.headers['content-type']
-			let error;
-			if (statusCode !== 200) {
-				error = new Error('请求失败\n' + `状态码: ${statusCode}`)
-				let params = {
-					  "toUser":GroupId,
-					  "sendToType": 2,
-					  "sendMsgType": "TextMsg",
-					  "content": error.message,
-					  "groupid": 0,
-					  "atUser": 0
+		// 获取重定向后的url
+		var find_link = function(link, collback) {
+			var f = function(link) {
+				var options = {
+					url: link,
+					followRedirect: false,
+					method: 'GET'
 				}
-				Api.SendMsg(params, GroupId)
-			} 
-			if (error) {
-				console.error(error.message)
-				// 消费响应数据来释放内存。
-				res.resume()
-				return
+		
+				request(options, (error, response, body)=>{
+					console.log(response.statusCode)
+					if (response.statusCode == 301 || response.statusCode == 302) {
+					    var location = response.headers.location;
+					    console.log('location: ' + location)
+					    f("https://baike.baidu.com" + location)
+					} else {
+					    collback(link)
+					}
+				})
 			}
-			let html = ''
-			// 数据分段 只要接收数据就会触发data事件  chunk：每次接收的数据片段
-			res.on('data', (chunk)=>{
-				html += chunk.toString('utf-8')
-			})
-			// 数据流传输完毕
-			res.on('end', ()=>{
-				console.log('数据传输完毕！')
-				try {
-					let $ =  cheerio.load(html)
-					let content = ''
-					$('div.lemma-summary > div.para').each((index, el)=>{
-						content += $(el).text()
-					})
-					console.log(content)
-					content = content.replace(/\[.*\]/g,'').replace(/[\r\n]/g,'')
+		
+			f(link)
+		}
+		find_link("https://baike.baidu.com/item/" + keyWord, function(link) {
+			http.get(link, (res) => {
+				const { statusCode } = res
+				const contentType = res.headers['content-type']
+				let error;
+				if (statusCode !== 200) {
+					error = new Error('请求失败\n' + `状态码: ${statusCode}`)
 					let params = {
 						  "toUser":GroupId,
 						  "sendToType": 2,
 						  "sendMsgType": "TextMsg",
-						  "content": content,
+						  "content": error.message,
 						  "groupid": 0,
 						  "atUser": 0
 					}
 					Api.SendMsg(params, GroupId)
-				} catch (e) {
-					console.error(e.message);
+				} 
+				if (error) {
+					console.error(error.message)
+					// 消费响应数据来释放内存。
+					res.resume()
+					return
 				}
+				let html = ''
+				// 数据分段 只要接收数据就会触发data事件  chunk：每次接收的数据片段
+				res.on('data', (chunk)=>{
+					html += chunk.toString('utf-8')
+				})
+				// 数据流传输完毕
+				res.on('end', ()=>{
+					console.log('数据传输完毕！')
+					try {
+						let $ =  cheerio.load(html)
+						let content = ''
+						$('div.lemma-summary > div.para').each((index, el)=>{
+							content += $(el).text()
+						})
+						console.log(content)
+						content = content.replace(/\[.*\]/g,'').replace(/[\r\n]/g,'')
+						let params = {
+							  "toUser":GroupId,
+							  "sendToType": 2,
+							  "sendMsgType": "TextMsg",
+							  "content": content,
+							  "groupid": 0,
+							  "atUser": 0
+						}
+						Api.SendMsg(params, GroupId)
+					} catch (e) {
+						console.error(e.message);
+					}
+				})
+			}).on('error', (e)=>{
+				console.error(`出现错误: ${e.message}`);
 			})
-		}).on('error', (e)=>{
-			console.error(`出现错误: ${e.message}`);
 		})
 	},
 	async Translate(GroupId, Content){
@@ -235,6 +262,24 @@ let Plugins = {
 			let result = await translate_open(keyWord, {
 			  tld: "cn",
 			  to: "zh-CN"
+			})
+			let {data} = result
+			console.log(data[0])
+			let params = {
+					"toUser":GroupId,
+					"sendToType": 2,
+					"sendMsgType": "TextMsg",
+					"content": data[0],
+					"groupid": 0,
+					"atUser": 0
+			}
+			Api.SendMsg(params, GroupId)
+	},
+	async Translate2En(GroupId, Content){
+		let keyWord = Content.substring(2)
+			let result = await translate_open(keyWord, {
+			  tld: "cn",
+			  to: "en"
 			})
 			let {data} = result
 			console.log(data[0])
