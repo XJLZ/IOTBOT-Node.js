@@ -94,11 +94,10 @@ function RefreshKeys(){
 }
 
 function getConnect(){
-	socket.emit('GetWebConn', '' + QQ, (data) => console.log(data))
-	console.log('心跳成功!')
+	socket.emit('GetWebConn', '' + QQ, (data) => console.log('心跳成功!'))
 }
 // 刷新Key 每隔30s
 setInterval(()=>{
 	getConnect()
-	RefreshKeys()
+	// RefreshKeys()
 },30000)
