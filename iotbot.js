@@ -59,45 +59,10 @@ socket.on('OnEvents', async data => {
 	console.log('>>OnEvents', JSON.stringify(data, null, 2))
 })
 
-// 刷新Key
-function RefreshKeys(){
-	// 构建请求体
-	let options = {
-		hostname: config.HOST,
-		port: config.PORT,
-		path: url,
-		method: 'GET',
-		headers: {
-			'Authorization': Authorization
-		}
-	}
-	// 发送请求
-	let req = http.request(options, (res)=>{
-		
-		res.setEncoding('utf8')
-		let rawData = ''
-		res.on('data', (chunk)=>{
-			rawData += chunk.toString('utf-8')
-		})
-		res.on('end', () => {
-			let {Ret} = JSON.parse(rawData)
-			if(Ret == 'ok'){
-				console.log('心跳成功!')
-			}
-		})
-	})
-	
-	req.on('error', (e) => {
-		console.error(`请求遇到问题: ${e.message}`)
-	})
-	req.end()
-}
-
 function getConnect(){
 	socket.emit('GetWebConn', '' + QQ, (data) => console.log('心跳成功!'))
 }
-// 刷新Key 每隔30s
+// 保持连接 每隔30s
 setInterval(()=>{
 	getConnect()
-	// RefreshKeys()
 },30000)
