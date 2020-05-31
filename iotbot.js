@@ -38,6 +38,9 @@ socket.on('OnGroupMsgs', async data => {
 			case '早':
 				await Plugin.Morning(FromGroupId,FromUserId)
 				break
+			case '历史上的今天':
+				await Plugin.History(FromGroupId)
+				break
 		}
 		if(Content.indexOf("百科") == 0){
 			Plugin.Baike(FromGroupId,Content)

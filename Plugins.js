@@ -1,16 +1,16 @@
-const http = require('https')
+const https = require('https')
+const http = require('http')
 const Api = require('./SendMsg')
 const fs = require('fs')
 const cheerio = require('cheerio')
 const request = require('request')
-// const translate = require('google-translate-api')
 const translate_open = require('google-translate-open-api').default
 const qs = require('querystring')
 let count = 0
 let Users = []
 let Plugins = {
 	Aword(GroupId){
-		http.get('https://v1.hitokoto.cn/', (res) => {
+		https.get('https://v1.hitokoto.cn/', (res) => {
 			const { statusCode } = res
 			const contentType = res.headers['content-type']
 			let error;
@@ -100,7 +100,7 @@ let Plugins = {
 		}
 		console.log(Users)
 		let date = new Date()
-		let time = date.getHours() + ":" + date.getMinutes()
+		let time = date.toString().split(" ")[4]
 		if(date.getHours() == 0) count = 0
 		count++
 		let welcomeArr = [
@@ -209,7 +209,7 @@ let Plugins = {
 			f(link)
 		}
 		find_link("https://baike.baidu.com/item/" + keyWord, function(link) {
-			http.get(link, (res) => {
+			https.get(link, (res) => {
 				const { statusCode } = res
 				const contentType = res.headers['content-type']
 				let error;
@@ -267,20 +267,6 @@ let Plugins = {
 	},
 	async Translate(GroupId, Content){
 		let keyWord = Content.substring(2)
-		// translate(keyWord, {to: 'zh-cn'}).then(res => {
-		//     console.log(res.text)
-		// 		let params = {
-		// 			  "toUser":GroupId,
-		// 			  "sendToType": 2,
-		// 			  "sendMsgType": "TextMsg",
-		// 			  "content": res.text,
-		// 			  "groupid": 0,
-		// 			  "atUser": 0
-		// 		}
-		// 		Api.SendMsg(params, GroupId)
-		// }).catch(err => {
-		//     console.error(err);
-		// });
 			let result = await translate_open(keyWord, {
 			  tld: "cn",
 			  to: "zh-CN"
@@ -314,6 +300,56 @@ let Plugins = {
 					"atUser": 0
 			}
 			Api.SendMsg(params, GroupId)
+	},
+	History(GroupId){
+		// windows
+		// let date = new Date().toLocaleString().split(' ')[0].substring(4).replace(/-/g,'/')
+		// linux/centos
+		let date = new Date().toLocaleString().substring(0,5)
+		http.get('http://www.todayonhistory.com' + date, (res) => {
+				const { statusCode } = res
+				const contentType = res.headers['content-type']
+				let error;
+				if (statusCode !== 200) {
+					error = new Error('请求失败\n' + `状态码: ${statusCode}`)
+				} 
+				if (error) {
+					console.error(error.message)
+					// 消费响应数据来释放内存。
+					res.resume()
+					return
+				}
+				let html = ''
+				// 数据分段 只要接收数据就会触发data事件  chunk：每次接收的数据片段
+				res.on('data', (chunk)=>{
+					html += chunk.toString('utf-8')
+				})
+				// 数据流传输完毕
+				res.on('end', ()=>{
+					console.log('数据传输完毕！')
+					try {
+						let $ =  cheerio.load(html)
+						let content = ''
+						$('#container li div div').each((index, el)=>{
+							content += $(el).text().replace(/[\n\t]/g,'') + '\n'
+						})
+						let params = {
+							  "toUser":GroupId,
+							  "sendToType": 2,
+							  "sendMsgType": "TextMsg",
+							  "content": content,
+							  "groupid": 0,
+							  "atUser": 0
+						}
+						Api.SendMsg(params, GroupId)
+					} catch (e) {
+						console.error(e.message);
+					}
+				})
+			}).on('error', (e)=>{
+				console.error(`出现错误: ${e.message}`);
+			})
+		
 	}
 }
 
