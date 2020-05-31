@@ -7,7 +7,7 @@ const request = require('request')
 const translate_open = require('google-translate-open-api').default
 const qs = require('querystring')
 let count = 0
-let users = []
+let Users = []
 let Plugins = {
 	Aword(GroupId){
 		http.get('https://v1.hitokoto.cn/', (res) => {
@@ -57,26 +57,48 @@ let Plugins = {
 	Morning(GroupId,UserId){
 		let flag = false
 		// 防止重复问候
-		if(users.length != 0){
-			for (let index in users) {
-				if(users[index] == UserId){
-					let params = {
-						  "toUser":GroupId,
-						  "sendToType": 2,
-						  "sendMsgType": "TextMsg",
-						  "content": "你已经问候过了，请不要重复问候哦！",
-						  "groupid": 0,
-						  "atUser": UserId
+		if(Users.length != 0){
+			for (let index in Users) {
+				for (let index2 in Users[index].User) {
+					if(Users[index].Group == GroupId && Users[index].User[index2] == UserId){
+						let params = {
+							  "toUser":GroupId,
+							  "sendToType": 2,
+							  "sendMsgType": "TextMsg",
+							  "content": "你已经问候过了，请不要重复问候哦！",
+							  "groupid": 0,
+							  "atUser": UserId
+						}
+						Api.SendMsg(params, GroupId)
+						flag = true
+						break
 					}
-					Api.SendMsg(params, GroupId)
-					flag = true
-					break
 				}
 			}
 		}
 		if(flag) return
-		users.push(UserId)
-		console.log(users)
+		if(Users.length == 0){
+			let obj = {
+			Group: GroupId,
+			User: [UserId]
+		}
+		Users.push(obj)
+		}else{
+			for (let index in Users) {
+				if(Users[index].Group == GroupId){
+					Users[index].User.push(UserId)
+					break;
+				}else{
+						let obj = { 
+							Group: GroupId,
+							User: [UserId]
+						}
+						Users.push(obj)		
+				}
+			}
+		
+		}
+		console.log(Users)
 		let date = new Date()
 		let time = date.getHours() + ":" + date.getMinutes()
 		if(date.getHours() == 0) count = 0
