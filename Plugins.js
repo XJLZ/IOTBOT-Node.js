@@ -320,7 +320,7 @@ let Plugins = {
 		let date = new Date().toLocaleString().split('/')
 		date = date[0] + '/' + date[1] + '/'
 		// console.log(date)
-		https.get('https://www.lssdjt.com' + date, (res) => {
+		https.get('https://www.lssdjt.com/' + date, (res) => {
 				const { statusCode } = res
 				const contentType = res.headers['content-type']
 				let error;
