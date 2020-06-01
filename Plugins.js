@@ -6,7 +6,6 @@ const cheerio = require('cheerio')
 const request = require('request')
 const translate_open = require('google-translate-open-api').default
 const qs = require('querystring')
-let count = 0
 let Users = []
 let Plugins = {
 	Aword(GroupId){
@@ -55,6 +54,7 @@ let Plugins = {
 		})
 	},
 	Morning(GroupId,UserId){
+		console.log(Users)
 		let flag = false
 		// 防止重复问候
 		if(Users.length != 0){
@@ -77,75 +77,87 @@ let Plugins = {
 			}
 		}
 		if(flag) return
+		let yes = false
 		if(Users.length == 0){
 			let obj = {
 			Group: GroupId,
-			User: [UserId]
+			User: [UserId],
+			Count: 0
 		}
 		Users.push(obj)
 		}else{
 			for (let index in Users) {
 				if(Users[index].Group == GroupId){
 					Users[index].User.push(UserId)
+					yes = true
 					break;
-				}else{
-						let obj = { 
-							Group: GroupId,
-							User: [UserId]
-						}
-						Users.push(obj)		
 				}
 			}
-		
+			console.log(yes)
+			if(!yes){
+				let obj = { 
+					Group: GroupId,
+					User: [UserId],
+					Count: 0
+				}
+				Users.push(obj)	
+			}
 		}
+		
 		console.log(Users)
 		let date = new Date()
 		let time = date.toString().split(" ")[4]
-		if(date.getHours() == 0) count = 0
-		count++
+		if(date.getHours() == 0) User = []
 		let welcomeArr = [
 		        '要不要和朋友打局LOL',
 		        '要不要和朋友打局王者荣耀',
 		        '几天没见又更好看了呢😍',
-		        '今天在群里吹水了吗？要来3张色图么？',
+		        '今天在群里吹水了吗？',
 		        '今天吃了什么好吃的呢',
 		        '今天您微笑了吗😊',
 		        '今天帮助别人解决问题了吗',
-		        '准备吃些什么呢？来3张色图开开胃?',
+		        '来点色图',
 		        '周末要不要去看电影？'
 		      ]
 		let index = Math.floor((Math.random() * welcomeArr.length))
+
 		if(date.getHours() < 9){
-			if(count == 1){
-				setTimeout(function(){
+			for (const index in Users) {
+				if(Users[index].Group == GroupId){
+					if( Users[index].Count == 0){
+						setTimeout(function(){
+							let params = {
+								  "toUser":GroupId,
+								  "sendToType": 2,
+								  "sendMsgType": "VoiceMsg",
+								  "content": "",
+								  "groupid": 0,
+								  "atUser": 0,
+									"voiceUrl": "https://sound-ks1.cdn.missevan.com/aod/202005/15/1f2c3edc2557cf0161fd20dcfebbf0e5130012-128k.m4a",
+									"voiceBase64Buf": ""
+							}
+							Api.SendMsg(params, GroupId)
+						},3000)
+					}
+					Users[index].Count++
 					let params = {
 						  "toUser":GroupId,
 						  "sendToType": 2,
-						  "sendMsgType": "VoiceMsg",
-						  "content": "",
+						  "sendMsgType": "TextMsg",
+						  "content": "现在时间" + time + ",你是第" + Users[index].Count + "个起床的boy," + welcomeArr[index],
 						  "groupid": 0,
-						  "atUser": 0,
-							"voiceUrl": "https://sound-ks1.cdn.missevan.com/aod/202005/15/1f2c3edc2557cf0161fd20dcfebbf0e5130012-128k.m4a",
-							"voiceBase64Buf": ""
+						  "atUser": 0
 					}
 					Api.SendMsg(params, GroupId)
-				},3000)
+				}
 			}
-			let params = {
-				  "toUser":GroupId,
-				  "sendToType": 2,
-				  "sendMsgType": "TextMsg",
-				  "content": "现在时间" + time + ",你是第" +count+ "个起床的boy," + welcomeArr[index],
-				  "groupid": 0,
-				  "atUser": 0
-			}
-			Api.SendMsg(params, GroupId)
+			
 		}else if(date.getHours() < 12){
 			let params = {
 				  "toUser":GroupId,
 				  "sendToType": 2,
 				  "sendMsgType": "TextMsg",
-				  "content": "上午好！今天又写了几个Bug🐞呢？中午准备吃些什么呢？来3张色图开开胃?" ,
+				  "content": "上午好！今天又写了几个Bug🐞呢？中午准备吃些什么呢？" + welcomeArr[index] ,
 				  "groupid": 0,
 				  "atUser": 0
 			}
@@ -305,8 +317,10 @@ let Plugins = {
 		// windows
 		// let date = new Date().toLocaleString().split(' ')[0].substring(4).replace(/-/g,'/')
 		// linux/centos
-		let date = new Date().toLocaleString().substring(0,5)
-		http.get('http://www.todayonhistory.com' + date, (res) => {
+		let date = new Date().toLocaleString().split('/')
+		date = date[0] + '/' + date[1] + '/'
+		// console.log(date)
+		https.get('https://www.lssdjt.com' + date, (res) => {
 				const { statusCode } = res
 				const contentType = res.headers['content-type']
 				let error;
@@ -330,9 +344,10 @@ let Plugins = {
 					try {
 						let $ =  cheerio.load(html)
 						let content = ''
-						$('#container li div div').each((index, el)=>{
+						$('body > div.w730.mt5.clearfix > div.l.w515 > div > div.main > ul.list.clearfix > li').each((index, el)=>{
 							content += $(el).text().replace(/[\n\t]/g,'') + '\n'
 						})
+						console.log(content)
 						let params = {
 							  "toUser":GroupId,
 							  "sendToType": 2,
