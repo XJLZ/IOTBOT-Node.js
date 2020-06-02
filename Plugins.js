@@ -209,7 +209,7 @@ let Plugins = {
 		}
 	},
 	Baike(GroupId, Content){
-		let keyWord = Content.substring(2)
+		let keyWord = Content.substring(2).trim()
 		keyWord = qs.escape(keyWord)
 		// 获取重定向后的url
 		var find_link = function(link, collback) {
@@ -292,7 +292,7 @@ let Plugins = {
 		})
 	},
 	async Translate(GroupId, Content){
-		let keyWord = Content.substring(2)
+		let keyWord = Content.substring(2).trim()
 			let result = await translate_open(keyWord, {
 			  tld: "cn",
 			  to: "zh-CN"
@@ -310,7 +310,7 @@ let Plugins = {
 			Api.SendMsg(params, GroupId)
 	},
 	async Translate2En(GroupId, Content){
-		let keyWord = Content.substring(2)
+		let keyWord = Content.substring(2).trim()
 			let result = await translate_open(keyWord, {
 			  tld: "cn",
 			  to: "en"
@@ -381,7 +381,7 @@ let Plugins = {
 		
 	},
 	Constellation(GroupId, Content){
-		let keyWord = Content.substring(2)
+		let keyWord = Content.substring(2).trim()
 		https.get('https://www.xzw.com/fortune/'+ map.get(keyWord) +'/', res => {
     const { statusCode } = res
     const contentType = res.headers['content-type']
