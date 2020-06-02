@@ -43,13 +43,16 @@ socket.on('OnGroupMsgs', async data => {
 				break
 		}
 		if(Content.indexOf("百科") == 0){
-			Plugin.Baike(FromGroupId,Content)
+			await Plugin.Baike(FromGroupId,Content)
 		}
 		if(Content.indexOf("翻译") == 0){
-			Plugin.Translate(FromGroupId,Content)
+			await Plugin.Translate(FromGroupId,Content)
 		}
 		if(Content.indexOf("翻英") == 0){
-			Plugin.Translate2En(FromGroupId,Content)
+			await Plugin.Translate2En(FromGroupId,Content)
+		}
+		if(Content.indexOf("运势") == 0){
+			await Plugin.Constellation(FromGroupId,Content)
 		}
 	}
 })
