@@ -1,5 +1,4 @@
 const io = require('socket.io-client')
-const http = require('http')
 const Plugin = require('./Middleware')
 const fs = require('fs')
 // 读取配置文件
