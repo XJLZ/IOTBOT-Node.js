@@ -9,7 +9,6 @@ const QQ = config.QQ
 const user = config.USER
 const pass = config.PASS
 const Authorization = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
-const url = '/v1/RefreshKeys?qq='+ QQ
 const socket = io(WS_API, {
 	transports: ['websocket'],
 	extraHeaders: {

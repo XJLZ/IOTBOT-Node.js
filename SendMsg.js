@@ -1,5 +1,4 @@
 const http = require('http')
-const request = require('request')
 const fs = require('fs')
 const config = JSON.parse(fs.readFileSync('./config.json'))
 const Authorization = 'Basic ' + Buffer.from(config.USER + ':' + config.PASS).toString('base64')
