@@ -1,6 +1,6 @@
 const io = require('socket.io-client')
 const http = require('http')
-const Plugin = require('./Plugins')
+const Plugin = require('./Middleware')
 const fs = require('fs')
 // 读取配置文件
 const config = JSON.parse(fs.readFileSync('./config.json'))
