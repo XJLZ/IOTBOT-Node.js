@@ -55,7 +55,7 @@ let Morning = {
 		console.log(Users)
 		let date = new Date()
 		let time = date.toString().split(" ")[4]
-		if(date.getHours() == 0) User = []
+		if(date.getHours() == 0) Users = []
 		let welcomeArr = [
 		        '要不要和朋友打局LOL',
 		        '要不要和朋友打局王者荣耀',
