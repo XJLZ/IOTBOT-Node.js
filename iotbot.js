@@ -1,5 +1,6 @@
 const io = require('socket.io-client')
 const Plugin = require('./Middleware')
+const schedule = require('node-schedule')
 const fs = require('fs')
 // 读取配置文件
 const config = JSON.parse(fs.readFileSync('./config.json'))
@@ -70,3 +71,12 @@ function getConnect(){
 setInterval(()=>{
 	getConnect()
 },30000)
+
+// 定义规则
+let rule = new schedule.RecurrenceRule()
+
+// 凌晨 0 点执行
+// 启动任务
+let job = schedule.scheduleJob('0 0 0 * * *', () => {
+	Plugin.Morning("0","0")
+})
