@@ -3,10 +3,7 @@ let Users = []
 let Morning = {
     get(GroupId,UserId){
 		let date = new Date()
-		if(date.getHours() == 0 && date.getMinutes() == 0){
-			Users = []
-			return
-		}
+		if(date.getHours() == 0 && date.getMinutes() == 0) Users = []
         console.log(Users)
 		let flag = false
 		// 防止重复问候
