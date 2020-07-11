@@ -1,11 +1,10 @@
 {
-	"QQ": 664424604,
-	"HOST": "114.55.28.190",
-	"PORT": 80,
+	"QQ": 你的机器人QQ，例如：888888888,
+	"HOST": 你的服务器地址，例如："127.0.0.1",
+	"PORT": 端口，例如：80,
 	"URI": "/v1/LuaApiCaller?",
-	"USER": "root",
-	"PASS": "Xiao_00oo",
-	"APIKEY": "",
+	"USER": 用户，例如："root",
+	"PASS": 密码，例如："root",
 	"PATTERN": "来(.*?)[点丶份张幅](.*?)的?(|r18)[色瑟涩插][画图圖]",
-	"MONGODBURL": "mongodb://114.55.28.190:50003/Pixiv"
+	"MONGODBURL": 你的mongodb地址,例如："mongodb://127.0.0.1:27017/Picture"
 }
