@@ -8,6 +8,7 @@ const WS_API = "http://" + config.HOST
 const QQ = config.QQ
 const user = config.USER
 const pass = config.PASS
+const pattern = config.PATTERN
 const Authorization = 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64')
 const socket = io(WS_API, {
 	transports: ['websocket'],
@@ -53,6 +54,9 @@ socket.on('OnGroupMsgs', async data => {
 		if(Content.indexOf("运势") == 0){
 			await Plugin.Constellation(FromGroupId,Content)
 		}
+		if(Content.match(pattern)){
+			await Plugin.HPicture(FromGroupId,Content,Content.match(pattern))
+	}
 	}
 })
 
@@ -71,10 +75,6 @@ function getConnect(){
 setInterval(()=>{
 	getConnect()
 },30000)
-
-// 定义规则
-let rule = new schedule.RecurrenceRule()
-
 // 凌晨 0 点执行
 // 启动任务
 let job = schedule.scheduleJob('0 0 0 * * *', () => {

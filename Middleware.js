@@ -5,7 +5,7 @@ const Translate = require('./Plugins/Translate')
 const Translate2En = require('./Plugins/Translate2En')
 const History = require('./Plugins/History')
 const Constellation = require('./Plugins/Constellation')
-
+const HPicture = require('./Plugins/HPicture');
 let Plugins = {
 	Aword(GroupId){
 		Aword.get(GroupId)
@@ -27,6 +27,9 @@ let Plugins = {
 	},
 	Constellation(GroupId, Content){
 		Constellation.get(GroupId,Content)
+	},
+	HPicture(GroupId, Content, arr){
+		HPicture.get(GroupId,Content,arr)
 	}
 }
 

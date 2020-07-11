@@ -7,8 +7,7 @@ let Morning = {
 		if(date.getHours() == 0 && date.getMinutes() == 0){
 			Users = []
 			return
-		}
-        console.log(Users)
+		}        console.log(Users)
 		let flag = false
 		// 防止重复问候
 		if(Users.length != 0){
