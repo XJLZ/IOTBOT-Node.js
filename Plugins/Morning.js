@@ -2,6 +2,12 @@ const Api = require('../SendMsg')
 let Users = []
 let Morning = {
     get(GroupId,UserId){
+		let date = new Date()
+		console.log(date)
+		if(date.getHours() == 0 && date.getMinutes() == 0){
+			Users = []
+			return
+		}
         console.log(Users)
 		let flag = false
 		// 防止重复问候
@@ -53,9 +59,7 @@ let Morning = {
 		}
 		
 		console.log(Users)
-		let date = new Date()
 		let time = date.toString().split(" ")[4]
-		if(date.getHours() == 0) User = []
 		let welcomeArr = [
 		        '要不要和朋友打局LOL',
 		        '要不要和朋友打局王者荣耀',
