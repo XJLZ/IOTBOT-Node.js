@@ -25,28 +25,27 @@ function sendPic(GroupId,tag) {
     console.log(tag);
     if(tag){
         Pixiv.find({ tags: tag }, (err, res) => {
+					console.log(res.length)
             if (err) {
                 console.log(err)
                 return
-            }
-						console.log("tags1\n",'-------'+res.length+'------------')
-            if (res.length === 0) {
-							console.log('==============')
-                Pixiv.find({ "author.name": tag }, (err, res) => {
-										console.log("name\n",'-------'+res.length+'------------')
-                    if (err) {
-                        console.log(err)
-                        return
-                    }
-                    if (res.length === 0) {
-												msg(GroupId)
-												return
-                    }
-                    pic(GroupId,res)
-										return
-                })
-            }
-					pic(GroupId,res)
+            }else if (res.length === 0) {
+							Pixiv.find({ "author.name": tag }, (err, res) => {
+								console.log(res.length)
+							    if (err) {
+							        console.log(err)
+							        return
+							    }else if (res.length === 0) {
+											msg(GroupId)
+											return
+							    }else{
+										pic(GroupId,res)
+									return
+									}
+							})
+            }else{
+							pic(GroupId,res)
+						}
         })
     }else{
 				msg(GroupId)
