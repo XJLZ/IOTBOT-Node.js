@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const config = JSON.parse(fs.readFileSync('./config.json'))
+const fs = require('fs')
+const config = JSON.parse(fs.readFileSync('../../config.json'))
 const mongodbUrl = config.MONGODBURL
 mongoose.connect(mongodbUrl, {
   useNewUrlParser: true,

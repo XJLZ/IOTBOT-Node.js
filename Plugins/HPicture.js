@@ -29,28 +29,27 @@ function sendPic(GroupId,tag) {
                 console.log(err)
                 return
             }
-            if (res.length < 0) {
+						console.log("tags1\n",'-------'+res.length+'------------')
+            if (res.length === 0) {
+							console.log('==============')
                 Pixiv.find({ "author.name": tag }, (err, res) => {
+										console.log("name\n",'-------'+res.length+'------------')
                     if (err) {
                         console.log(err)
                         return
                     }
-                    if (res.length < 0) {
-                        return
+                    if (res.length === 0) {
+												msg(GroupId)
+												return
                     }
                     pic(GroupId,res)
+										return
                 })
             }
-            pic(GroupId,res)
+					pic(GroupId,res)
         })
     }else{
-        Pixiv.find({}, (err, res) => {
-            if (err) {
-                console.log(err)
-                msg(GroupId)
-            }
-            pic(GroupId,res)
-        })
+				msg(GroupId)
     }
 }
 
