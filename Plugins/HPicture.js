@@ -24,6 +24,7 @@ let HPicture = {
 function sendPic(GroupId,tag) {
     console.log(tag);
     if(tag){
+        tag = new RegExp(tag) //模糊查询参数
         Pixiv.find({ tags: tag }, (err, res) => {
 					console.log(res.length)
             if (err) {
