@@ -24,33 +24,32 @@ let HPicture = {
 function sendPic(GroupId,tag) {
     console.log(tag);
     if(tag){
+        tag = new RegExp(tag) //模糊查询参数
         Pixiv.find({ tags: tag }, (err, res) => {
+					console.log(res.length)
             if (err) {
                 console.log(err)
                 return
-            }
-            if (res.length < 0) {
-                Pixiv.find({ "author.name": tag }, (err, res) => {
-                    if (err) {
-                        console.log(err)
-                        return
-                    }
-                    if (res.length < 0) {
-                        return
-                    }
-                    pic(GroupId,res)
-                })
-            }
-            pic(GroupId,res)
+            }else if (res.length === 0) {
+							Pixiv.find({ "author.name": tag }, (err, res) => {
+								console.log(res.length)
+							    if (err) {
+							        console.log(err)
+							        return
+							    }else if (res.length === 0) {
+											msg(GroupId)
+											return
+							    }else{
+										pic(GroupId,res)
+									return
+									}
+							})
+            }else{
+							pic(GroupId,res)
+						}
         })
     }else{
-        Pixiv.find({}, (err, res) => {
-            if (err) {
-                console.log(err)
-                msg(GroupId)
-            }
-            pic(GroupId,res)
-        })
+				msg(GroupId)
     }
 }
 

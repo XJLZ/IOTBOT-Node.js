@@ -56,7 +56,7 @@ socket.on('OnGroupMsgs', async data => {
 		}
 		if(Content.match(pattern)){
 			await Plugin.HPicture(FromGroupId,Content,Content.match(pattern))
-		}
+	}
 	}
 })
 
@@ -75,7 +75,6 @@ function getConnect(){
 setInterval(()=>{
 	getConnect()
 },30000)
-
 // 凌晨 0 点执行
 // 启动任务
 let job = schedule.scheduleJob('0 0 0 * * *', () => {
