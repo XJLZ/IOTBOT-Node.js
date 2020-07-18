@@ -24,7 +24,7 @@ let HPicture = {
 function sendPic(GroupId,tag) {
     console.log(tag);
     if(tag){
-        tag = new RegExp(tag) //模糊查询参数
+	tag = new RegExp(tag) //模糊查询参数
         Pixiv.find({ tags: tag }, (err, res) => {
 					console.log(res.length)
             if (err) {
@@ -73,7 +73,7 @@ function msg(GroupId){
     let params = {
         "toUser": GroupId,
         "sendToType": 2,
-        "sendMsgType": "PicMsg",
+        "sendMsgType": "TextMsg",
         "content": "未收录该系列插画！",
         "groupid": 0,
         "atUser": 0
