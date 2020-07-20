@@ -82,3 +82,4 @@ function msg(GroupId) {
 }
 
 module.exports = HPicture
+
