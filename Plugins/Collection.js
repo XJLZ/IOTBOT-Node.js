@@ -1,7 +1,7 @@
 const Api = require('../SendMsg')
 const Pixiv = require('./Mongodb/Pixiv');
 
-let HPicture = {
+let Collection = {
     get(GroupId) {
         Pixiv.aggregate([
             { $group: { _id : '$author.name', count: { $sum : 1 } } },
@@ -12,7 +12,7 @@ let HPicture = {
                 "toUser": GroupId,
                 "sendToType": 2,
                 "sendMsgType": "TextMsg",
-                "content": res,
+                "content": JSON.stringify(res),
                 "groupid": 0,
                 "atUser": 0
             }

@@ -38,7 +38,7 @@ function sendPic(GroupId, tag) {
                         return
                     } else if (res.length === 0) {
                         msg(GroupId)
-                        break
+                        return
                     } else {
                         pic(GroupId, res)
                         return
@@ -82,4 +82,3 @@ function msg(GroupId) {
 }
 
 module.exports = HPicture
-
