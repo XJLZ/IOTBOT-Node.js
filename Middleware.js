@@ -6,6 +6,8 @@ const Translate2En = require('./Plugins/Translate2En')
 const History = require('./Plugins/History')
 const Constellation = require('./Plugins/Constellation')
 const HPicture = require('./Plugins/HPicture');
+const Collection = require('./Plugins/Collection');
+
 let Plugins = {
 	Aword(GroupId){
 		Aword.get(GroupId)
@@ -30,6 +32,9 @@ let Plugins = {
 	},
 	HPicture(GroupId, Content, arr){
 		HPicture.get(GroupId,Content,arr)
+	},
+	Collection(GroupId){
+		Collection.get(GroupId)
 	}
 }
 

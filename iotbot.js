@@ -41,6 +41,8 @@ socket.on('OnGroupMsgs', async data => {
 			case '历史上的今天':
 				await Plugin.History(FromGroupId)
 				break
+			case '收录列表':
+				await Plugin.Collection(FromGroupId)
 		}
 		if(Content.indexOf("百科") == 0){
 			await Plugin.Baike(FromGroupId,Content)
