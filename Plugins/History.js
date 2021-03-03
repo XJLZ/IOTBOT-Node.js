@@ -1,19 +1,24 @@
-const https = require('https')
+const http = require('http')
 const cheerio = require('cheerio')
 const Api = require('../SendMsg')
 let History = {
     get(GroupId) {
-        // windows
-        // let date = new Date().toLocaleString().split(' ')[0].substring(4).replace(/-/g,'/')
-        // linux/centos
-        let date = new Date().toLocaleString().split('/')
-        date = date[0] + '/' + date[1] + '/'
-        // console.log(date)
-        https.get('https://www.lssdjt.com/' + date, (res) => {
+        let date = new Date()
+        let day = date.getDay()
+        let month = date.getMonth()
+        if (day < 10) {
+            day = "0" + day
+        }
+        if (month < 10) {
+            month = "0" + (month + 1)
+        }
+        let url = 'http://www.people.com.cn/GB/historic/' + month + day
+        console.log(url);
+        http.get(url, (res) => {
             const { statusCode } = res
             const contentType = res.headers['content-type']
             let error;
-            if (statusCode !== 200) {
+            if (statusCode == 500 || statusCode == 404) {
                 error = new Error('请求失败\n' + `状态码: ${statusCode}`)
             }
             if (error) {
@@ -33,7 +38,7 @@ let History = {
                 try {
                     let $ = cheerio.load(html)
                     let content = ''
-                    $('body > div.w730.mt5.clearfix > div.l.w515 > div > div.main > ul.list.clearfix > li').each((index, el) => {
+                    $('body > center > table:nth-child(3) > tbody > tr:nth-child(1) > td:nth-child(4) > table > tbody > tr > td > a').each((index, el) => {
                         content += $(el).text().replace(/[\n\t]/g, '') + '\n'
                     })
                     console.log(content)

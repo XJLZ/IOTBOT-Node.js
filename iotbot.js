@@ -1,6 +1,5 @@
 const io = require('socket.io-client')
 const Plugin = require('./Middleware')
-const schedule = require('node-schedule')
 const fs = require('fs')
 // 读取配置文件
 const config = JSON.parse(fs.readFileSync('./config.json'))
@@ -30,35 +29,39 @@ socket.on('OnGroupMsgs', async data => {
 	if (MsgType == 'PicMsg') {
 		let MsgDate = JSON.parse(Content)
 		// console.log(MsgDate.GroupPic[0].Url)
-	}else{
-		switch(Content){
-			case '一言':
-				await Plugin.Aword(FromGroupId)
-				break
+	} else {
+		switch (Content) {
+			//case '18':
+			//	await Plugin.Setu(FromGroupId)
+			//	break
+			//case '色图':
+			//	await Plugin.Aword(FromGroupId)
+			//	break
 			case '早':
-				await Plugin.Morning(FromGroupId,FromUserId)
+				await Plugin.Morning(FromGroupId, FromUserId)
 				break
 			case '历史上的今天':
 				await Plugin.History(FromGroupId)
 				break
-			case '收录列表':
-				await Plugin.Collection(FromGroupId)
+			case '作者':
+				await Plugin.Authors(FromGroupId)
+				break
 		}
-		if(Content.indexOf("百科") == 0){
-			await Plugin.Baike(FromGroupId,Content)
+		if (Content.indexOf("百科") == 0) {
+			await Plugin.Baike(FromGroupId, Content)
 		}
-		if(Content.indexOf("翻译") == 0){
-			await Plugin.Translate(FromGroupId,Content)
+		if (Content.indexOf("翻译") == 0) {
+			await Plugin.Translate(FromGroupId, Content)
 		}
-		if(Content.indexOf("翻英") == 0){
-			await Plugin.Translate2En(FromGroupId,Content)
+		if(Content.indexOf("YSF") == 0){
+			await Plugin.Yinfans(FromGroupId,Content)
 		}
-		if(Content.indexOf("运势") == 0){
-			await Plugin.Constellation(FromGroupId,Content)
+		if (Content.indexOf("运势") == 0) {
+			await Plugin.Constellation(FromGroupId, Content)
 		}
-		if(Content.match(pattern)){
-			await Plugin.HPicture(FromGroupId,Content,Content.match(pattern))
-	}
+		if (Content.match(pattern)) {
+			await Plugin.HPicture(FromGroupId, Content, Content.match(pattern))
+		}
 	}
 })
 
@@ -70,15 +73,10 @@ socket.on('OnEvents', async data => {
 	console.log('>>OnEvents', JSON.stringify(data, null, 2))
 })
 
-function getConnect(){
+function getConnect() {
 	socket.emit('GetWebConn', '' + QQ, (data) => console.log('心跳成功!'))
 }
 // 保持连接 每隔30s
-setInterval(()=>{
+setInterval(() => {
 	getConnect()
-},30000)
-// 凌晨 0 点执行
-// 启动任务
-let job = schedule.scheduleJob('0 0 0 * * *', () => {
-	Plugin.Morning("0","0")
-})
+}, 30000)
