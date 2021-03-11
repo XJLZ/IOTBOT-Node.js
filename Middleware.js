@@ -2,6 +2,7 @@ const Aword = require('./Plugins/AWord')
 const Morning = require('./Plugins/Morning')
 const Baike = require('./Plugins/Baike')
 const Yinfans = require('./Plugins/Yinfans')
+const HdMovie = require('./Plugins/HdMovie')
 const History = require('./Plugins/History')
 const Constellation = require('./Plugins/Constellation')
 const HPicture = require('./Plugins/HPicture');
@@ -26,6 +27,9 @@ let Plugins = {
 	},
 	Yinfans(GroupId, Content){
 		Yinfans.get(GroupId,Content)
+	},
+	HdMovie(GroupId, Content){
+		HdMovie.get(GroupId,Content)
 	},
 	History(GroupId){
 		History.get(GroupId)

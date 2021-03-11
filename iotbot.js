@@ -56,6 +56,9 @@ socket.on('OnGroupMsgs', async data => {
 		if(Content.indexOf("YSF") == 0){
 			await Plugin.Yinfans(FromGroupId,Content)
 		}
+		if(Content.indexOf("HD") == 0){
+			await Plugin.HdMovie(FromGroupId,Content)
+		}
 		if (Content.indexOf("运势") == 0) {
 			await Plugin.Constellation(FromGroupId, Content)
 		}
