@@ -1,6 +1,9 @@
 const io = require('socket.io-client')
 const Plugin = require('./Middleware')
 const fs = require('fs')
+const random = require('string-random')
+const Api = require('./SendMsg')
+let NewUsers = new Map()
 // 读取配置文件
 const config = JSON.parse(fs.readFileSync('./config.json'))
 const WS_API = "http://" + config.HOST
@@ -25,9 +28,14 @@ socket.on('disconnect', e => console.log('WS已断开', e))
 
 socket.on('OnGroupMsgs', async data => {
 	console.log('>>OnGroupMsgs', JSON.stringify(data, null, 2))
-	let { FromGroupId, FromUserId, Content, MsgType } = data.CurrentPacket.Data
+	let { FromGroupId, FromUserId, Content, MsgType, MsgSeq, MsgRandom } = data.CurrentPacket.Data
 	if (MsgType == 'PicMsg') {
-		let MsgDate = JSON.parse(Content)
+		//if(FromUserId == 1468557975 && FromGroupId != 578111062 && Content != null){
+		//await setTimeout(() => {
+		//	 Plugin.RevokePic(FromGroupId, MsgSeq,MsgRandom);
+		//  }, 20000);
+		//}
+		// let MsgDate = JSON.parse(Content)
 		// console.log(MsgDate.GroupPic[0].Url)
 	} else {
 		switch (Content) {
@@ -53,17 +61,27 @@ socket.on('OnGroupMsgs', async data => {
 		if (Content.indexOf("翻译") == 0) {
 			await Plugin.Translate(FromGroupId, Content)
 		}
-		if(Content.indexOf("YSF") == 0){
-			await Plugin.Yinfans(FromGroupId,Content)
+		if (Content.indexOf("YSF") == 0) {
+			await Plugin.Yinfans(FromGroupId, Content)
 		}
-		if(Content.indexOf("HD") == 0){
-			await Plugin.HdMovie(FromGroupId,Content)
+		if (Content.indexOf("HD") == 0) {
+			await Plugin.HdMovie(FromGroupId, Content)
 		}
 		if (Content.indexOf("运势") == 0) {
 			await Plugin.Constellation(FromGroupId, Content)
 		}
 		if (Content.match(pattern)) {
 			await Plugin.HPicture(FromGroupId, Content, Content.match(pattern))
+		}
+		if (NewUsers.get(FromUserId) == Content) {
+			await Plugin.Welcome(FromGroupId, FromUserId)
+			NewUsers.delete(FromUserId)
+		}
+		if (NewUsers.has(FromUserId) != null && Content == '看不清') {
+			const Code = random(6, { letters: false })
+			NewUsers.set(FromUserId, Code)
+			console.log(NewUsers)
+			await Plugin.NewUser(FromGroupId, FromUserId, Code)
 		}
 	}
 })
@@ -74,6 +92,31 @@ socket.on('OnFriendMsgs', async data => {
 
 socket.on('OnEvents', async data => {
 	console.log('>>OnEvents', JSON.stringify(data, null, 2))
+	let { EventData, EventName, EventMsg } = data.CurrentPacket.Data
+	if (EventName == 'ON_EVENT_GROUP_JOIN') {
+		let UserId = EventData.UserID
+		let GroupId = EventMsg.FromUin
+		const Code = random(6, { letters: false })
+		NewUsers.set(UserId, Code)
+		console.log(NewUsers)
+		await Plugin.NewUser(GroupId, UserId, Code)
+		setTimeout(() => {
+			if (NewUsers.has(UserId)) {
+				// 踢人
+				let params = {
+					"toUser": GroupId,
+					"sendToType": 2,
+					"sendMsgType": "TextMsg",
+					"content": "[ATUSER(" + UserId + ")]由于您没有及时验证，将立即将你移除该群！",
+					"groupid": 0,
+					"atUser": 0
+				}
+				Api.SendMsg(params, GroupId)
+				setTimeout(() => { Api.RemoveAway(GroupId, UserId) }, 5000)
+
+			}
+		}, 1000 * 60 * 10)
+	}
 })
 
 function getConnect() {

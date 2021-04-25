@@ -36,6 +36,74 @@ let Api = {
 		// 将数据写入请求主体。
 		req.write(params)
 		req.end()
+	},
+	// 撤回消息
+	Revoke(params){
+		params = JSON.stringify(params)
+		// 构建请求体
+		let options = {
+			hostname: config.HOST,
+			port: config.PORT,
+			path: config.URI + 'qq='+ config.QQ + '&funcname=RevokeMsg&timeout=10',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Authorization
+			}
+		}
+		// 发送消息
+		let req = http.request(options, (res)=>{
+			res.setEncoding('utf8')
+			let rawData = ''
+			res.on('data', (chunk)=>{
+				rawData += chunk.toString('utf-8')
+			})
+			res.on('end', () => {
+				console.log('响应中已无数据')
+			})
+		})
+		
+		req.on('error', (e) => {
+		  console.error(`请求遇到问题: ${e.message}`)
+		})
+		
+		// 将数据写入请求主体。
+		req.write(params)
+		req.end()
+	},
+	// 踢人
+	RemoveAway(GroupId,UserId){
+		let params = {"ActionType":3,"GroupID":GroupId,"ActionUserID":UserId,"Content":""}
+		// 构建请求体
+		let options = {
+			hostname: config.HOST,
+			port: config.PORT,
+			path: config.URI + 'qq='+ config.QQ + '&funcname=GroupMgr&timeout=10',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': Authorization
+			}
+		}
+		// 发送消息
+		let req = http.request(options, (res)=>{
+			res.setEncoding('utf8')
+			let rawData = ''
+			res.on('data', (chunk)=>{
+				rawData += chunk.toString('utf-8')
+			})
+			res.on('end', () => {
+				console.log('响应中已无数据')
+			})
+		})
+		
+		req.on('error', (e) => {
+		  console.error(`请求遇到问题: ${e.message}`)
+		})
+		
+		// 将数据写入请求主体。
+		req.write(JSON.stringify(params))
+		req.end()
 	}
 }
 
