@@ -58,15 +58,6 @@ socket.on('OnGroupMsgs', async data => {
 		if (Content.indexOf("百科") == 0) {
 			await Plugin.Baike(FromGroupId, Content)
 		}
-		if (Content.indexOf("翻译") == 0) {
-			await Plugin.Translate(FromGroupId, Content)
-		}
-		if (Content.indexOf("YSF") == 0) {
-			await Plugin.Yinfans(FromGroupId, Content)
-		}
-		if (Content.indexOf("HD") == 0) {
-			await Plugin.HdMovie(FromGroupId, Content)
-		}
 		if (Content.indexOf("运势") == 0) {
 			await Plugin.Constellation(FromGroupId, Content)
 		}
@@ -115,7 +106,7 @@ socket.on('OnEvents', async data => {
 				setTimeout(() => { Api.RemoveAway(GroupId, UserId) }, 5000)
 
 			}
-		}, 1000 * 60 * 10)
+		}, 1000 * 60 * 3)
 	}
 })
 
