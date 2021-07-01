@@ -1,4 +1,4 @@
-# IOTBOT-Node.js
+# IOTBOT-Node.js -----> 项目已重构，请移步到 OPQ-NodeJs https://github.com/opq-osc/OPQ-NodeJs
 ## 开始
 
 1.首先的有node环境，没有的自行百度安装。  
